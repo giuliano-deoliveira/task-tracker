@@ -1,26 +1,73 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-bg: #F7F6F3;
+  --color-sidebar: #EFEDE8;
+  --color-surface: #FFFFFF;
+  --color-border: #E2DFD8;
+  --color-accent: #3D5A80;
+  --color-accent-hover: #2C4463;
+  --color-accent-light: #E8F0F9;
+  --color-text: #1A1A1A;
+  --color-text-secondary: #6B7280;
+  --color-text-muted: #9CA3AF;
+  --color-done: #4A9B6F;
+  --color-rolled: #B45309;
+  --color-cue-bg: #F0EDE8;
+  --color-cornell-divider: #C8C3BA;
+
+  --font-serif: "Lora", Georgia, serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+
+  --radius-card: 12px;
+  --radius-input: 8px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #F7F6F3;
+  color: #1A1A1A;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
 }
+
+.font-serif { font-family: "Lora", Georgia, serif; }
+.font-mono { font-family: "JetBrains Mono", "Fira Code", monospace; }
+
+/* Tiptap editor reset */
+.tiptap {
+  outline: none;
+  min-height: 100%;
+  line-height: 1.7;
+}
+
+.tiptap p { margin: 0 0 0.5em; }
+.tiptap p:last-child { margin-bottom: 0; }
+.tiptap ul, .tiptap ol { padding-left: 1.5em; margin: 0 0 0.5em; }
+.tiptap li { margin: 0.2em 0; }
+.tiptap strong { font-weight: 600; }
+.tiptap em { font-style: italic; }
+.tiptap code { font-family: "JetBrains Mono", monospace; background: #F0EDE8; padding: 0.1em 0.3em; border-radius: 3px; font-size: 0.88em; }
+.tiptap h2 { font-size: 1.1em; font-weight: 600; margin: 0.8em 0 0.3em; font-family: "Lora", serif; }
+.tiptap a { color: #3D5A80; text-decoration: underline; }
+
+/* Tiptap placeholder */
+.tiptap p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: #9CA3AF;
+  pointer-events: none;
+  float: left;
+  height: 0;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #C8C3BA; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #9CA3AF; }
