@@ -4,7 +4,14 @@ export type PageId = string;
 export type TaskId = string;
 export type DateKey = string; // "YYYY-MM-DD"
 
-export type TaskStatus = "todo" | "done" | "rolled";
+export type TaskStatus = "todo" | "done";
+
+export interface SubTask {
+  id: string;
+  text: string;
+  done: boolean;
+  createdAt: string;
+}
 
 export interface Task {
   id: TaskId;
@@ -13,7 +20,7 @@ export interface Task {
   createdAt: string;
   completedAt?: string;
   rolledFromDate?: DateKey;
-  rolledToDate?: DateKey;
+  subtasks?: SubTask[];
 }
 
 export interface BasePage {

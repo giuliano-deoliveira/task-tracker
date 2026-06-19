@@ -7,11 +7,13 @@ interface UIStore {
   activePageId: string | null;
   calendarViewMonth: string;
   sidebarCollapsed: boolean;
+  shortcutsOpen: boolean;
 
   setSelectedDate: (date: string) => void;
   setActivePageId: (id: string | null) => void;
   setCalendarViewMonth: (month: string) => void;
   toggleSidebar: () => void;
+  setShortcutsOpen: (open: boolean) => void;
 }
 
 export const useUIStore = create<UIStore>((set) => {
@@ -21,10 +23,12 @@ export const useUIStore = create<UIStore>((set) => {
     activePageId: null,
     calendarViewMonth: monthKey(today),
     sidebarCollapsed: false,
+    shortcutsOpen: false,
 
     setSelectedDate: (date) => set({ selectedDate: date, calendarViewMonth: monthKey(date) }),
     setActivePageId: (id) => set({ activePageId: id }),
     setCalendarViewMonth: (month) => set({ calendarViewMonth: month }),
     toggleSidebar: () => set((s) => ({ sidebarCollapsed: !s.sidebarCollapsed })),
+    setShortcutsOpen: (open) => set({ shortcutsOpen: open }),
   };
 });

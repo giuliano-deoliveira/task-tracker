@@ -19,10 +19,12 @@ interface PlannerStore {
   addTask: (pageId: PageId, text: string) => void;
   updateTaskText: (pageId: PageId, taskId: TaskId, text: string) => void;
   toggleTaskStatus: (pageId: PageId, taskId: TaskId) => void;
-  setTaskRollover: (pageId: PageId, taskId: TaskId, nextDateKey: DateKey) => void;
-  removeRollover: (pageId: PageId, taskId: TaskId) => void;
   deleteTask: (pageId: PageId, taskId: TaskId) => void;
   applyRolledTasks: (dateKey: DateKey) => void;
+  addSubtask: (pageId: PageId, taskId: TaskId, text: string) => void;
+  toggleSubtask: (pageId: PageId, taskId: TaskId, subtaskId: string) => void;
+  updateSubtaskText: (pageId: PageId, taskId: TaskId, subtaskId: string, text: string) => void;
+  deleteSubtask: (pageId: PageId, taskId: TaskId, subtaskId: string) => void;
 }
 
 const emptyDoc: JSONContent = { type: "doc", content: [{ type: "paragraph" }] };
@@ -125,42 +127,6 @@ export const usePlannerStore = create<PlannerStore>()(
         });
       },
 
-      setTaskRollover: (pageId, taskId, nextDateKey) => {
-        set((s) => {
-          const page = s.pages[pageId] as TaskPage;
-          if (!page || page.type !== "task") return s;
-          return {
-            pages: {
-              ...s.pages,
-              [pageId]: {
-                ...page,
-                tasks: page.tasks.map((t) =>
-                  t.id === taskId ? { ...t, status: "rolled" as TaskStatus, rolledToDate: nextDateKey } : t
-                ),
-              },
-            },
-          };
-        });
-      },
-
-      removeRollover: (pageId, taskId) => {
-        set((s) => {
-          const page = s.pages[pageId] as TaskPage;
-          if (!page || page.type !== "task") return s;
-          return {
-            pages: {
-              ...s.pages,
-              [pageId]: {
-                ...page,
-                tasks: page.tasks.map((t) =>
-                  t.id === taskId ? { ...t, status: "todo" as TaskStatus, rolledToDate: undefined } : t
-                ),
-              },
-            },
-          };
-        });
-      },
-
       deleteTask: (pageId, taskId) => {
         set((s) => {
           const page = s.pages[pageId] as TaskPage;
@@ -175,6 +141,87 @@ export const usePlannerStore = create<PlannerStore>()(
         if (result) {
           set({ pages: result.updatedPages, pageIdsByDate: result.updatedIndex });
         }
+      },
+
+      addSubtask: (pageId, taskId, text) => {
+        const subtaskId = nanoid();
+        set((s) => {
+          const page = s.pages[pageId] as TaskPage;
+          if (!page || page.type !== "task") return s;
+          return {
+            pages: {
+              ...s.pages,
+              [pageId]: {
+                ...page,
+                tasks: page.tasks.map((t) =>
+                  t.id === taskId
+                    ? { ...t, subtasks: [...(t.subtasks ?? []), { id: subtaskId, text, done: false, createdAt: new Date().toISOString() }] }
+                    : t
+                ),
+              },
+            },
+          };
+        });
+      },
+
+      toggleSubtask: (pageId, taskId, subtaskId) => {
+        set((s) => {
+          const page = s.pages[pageId] as TaskPage;
+          if (!page || page.type !== "task") return s;
+          return {
+            pages: {
+              ...s.pages,
+              [pageId]: {
+                ...page,
+                tasks: page.tasks.map((t) =>
+                  t.id === taskId
+                    ? { ...t, subtasks: t.subtasks?.map((st) => st.id === subtaskId ? { ...st, done: !st.done } : st) }
+                    : t
+                ),
+              },
+            },
+          };
+        });
+      },
+
+      updateSubtaskText: (pageId, taskId, subtaskId, text) => {
+        set((s) => {
+          const page = s.pages[pageId] as TaskPage;
+          if (!page || page.type !== "task") return s;
+          return {
+            pages: {
+              ...s.pages,
+              [pageId]: {
+                ...page,
+                tasks: page.tasks.map((t) =>
+                  t.id === taskId
+                    ? { ...t, subtasks: t.subtasks?.map((st) => st.id === subtaskId ? { ...st, text } : st) }
+                    : t
+                ),
+              },
+            },
+          };
+        });
+      },
+
+      deleteSubtask: (pageId, taskId, subtaskId) => {
+        set((s) => {
+          const page = s.pages[pageId] as TaskPage;
+          if (!page || page.type !== "task") return s;
+          return {
+            pages: {
+              ...s.pages,
+              [pageId]: {
+                ...page,
+                tasks: page.tasks.map((t) =>
+                  t.id === taskId
+                    ? { ...t, subtasks: t.subtasks?.filter((st) => st.id !== subtaskId) }
+                    : t
+                ),
+              },
+            },
+          };
+        });
       },
     }),
     {
